@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="da-DK">
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+	<link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet"> 
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	<style>
+	body {
+		font-family: 'Acme', sans-serif;
+	}
+	
+	.ui {
+		position: absolute;
+        right: 3%;
+        top: 3%;
+		width: 500px;
+		height: 320px;
+		border-radius: 5px;
+		color: #ffffff;
+	}
+
+	.ui::after {
+		border-radius: 5px;
+		content: "";
+		background-image: url("img/ranking_bg.png");
+		opacity: 0.9;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		position: absolute;
+		z-index: -1;
+	}
+	
+	.teamblock {
+		position: relative;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 90px;
+		width: 100%;
+		font-size: 24px;
+		line-height: 35px;
+		z-index: 2;
+	}
+
+	.teamname {
+		display: inline-block;
+		width: 45%;
+	}
+
+	.textr {
+		float: left;
+		text-align: right;
+	}
+
+	.textl {
+		float: right;
+		text-align: left;
+	}
+
+	.logoteam {
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		z-index: 1;
+	}
+
+	.logoteam img {
+		position: absolute;
+		opacity: 0.8;
+	}
+	
+	.pointblock {
+		position: relative;
+		width: 100%;
+		font-size: 50px;
+		z-index: 2;
+	}
+	
+	.timeblock {
+		position: relative;
+		margin-top: -5px;
+		margin-left: auto;
+		margin-right: auto;
+		width: 100%;
+		text-align: center;
+		font-size: 20px;
+		z-index: 2;
+	}
+
+	.flaga, .flagb {
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		z-index: 1;
+	}
+
+	.flaga img, .flagb img {
+		position: absolute;
+	}
+	
+	#wteam{
+		display: inline-block;
+		width: 40%;
+		margin-right: 8.5%;
+		text-align: right;
+	}
+	
+	#bteam {
+		display: inline-block;
+		width: 40%;
+		margin-left: 8.5%
+	}
+	
+	.mvpblock {
+		margin-top: 10px;
+		text-align: center;
+		font-size: 16px;
+	}
+
+	.blockKill {
+        position: absolute;
+        max-width: 100%;
+        height: 100%;
+        right: 1.5%;
+        top: 355px;
+    }
+	
+	.kill {
+        position: relative;
+		line-height: 25px;
+		color: white;
+        height: 25px;
+        text-align: left;
+        background: rgba(0, 0, 0, 0.7);
+		border-radius: 5px;
+        animation: slide-right 1.5s both;
+		margin-top: 2px;
+    }
+    
+    @keyframes slide-right {
+        0% {
+            -webkit-transform: translateX(300px);
+            transform: translateX(300px);
+        }
+        100% {
+            -webkit-transform: translateX(10);
+            transform: translateX(10);
+        }
+    }
+	
+	h3 {
+		margin-top: 10px;
+		margin-bottom: 5px;
+	}
+  </style>
+</head>
+<body style="overflow: hidden;background: none;display: none;" id="wrap">
+	<div class="ui">
+		<div class="logoteam"></div>
+		<div class="teamblock"></div>
+		<div class="pointblock"></div>
+		<div class="timeblock"></div>
+		<div class="flaga"></div>
+		<div class="flagb"></div>
+		<div class="mvpblock"></div>
+	</div>
+	<div class="blockKill">
+		<div id="killfeed">
+		</div>
+	</div>
+<script>
+  $(function()
+  {
+   window.addEventListener('message', function(event)
+   {
+    var item = event.data;
+	var team1 = item.team1;
+	var teamlabel1 = item.team1l;
+	var team2 = item.team2;
+	var teamlabel2 = item.team2l;
+	
+	var actionContainer = $("#wrap");
+	// Show the menu 
+	if ( item.showmenu ) {
+		actionContainer.fadeIn();
+		$('.teamblock').html('<div class="teamname textr">' + teamlabel1 + '</div><div class="teamname textl">' + teamlabel2 + '</div>');
+		$('.logoteam').html('<img src="img/team/' + team1 + '_l.png"><img src="img/team/' + team2 + '_r.png">');
+		$('.timeblock').html('<i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;&nbsp;'+item.sec);
+	}
+
+	// Hide the menu 
+	if ( item.hidemenu ) {
+		actionContainer.fadeOut();
+	}
+	
+	if ( item.uptime ) {
+		$('.timeblock').html('<i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;&nbsp;'+item.sec);
+	}
+	
+	if ( item.upflag ) {
+		if (item.flaga != "none") {
+			$('.flaga').html('<img src="img/flag_' + item.flaga + '.png">');
+		} else {
+			$('.flaga').html('');
+		}
+		if (item.flagb != "none") {
+			$('.flagb').html('<img src="img/flagb_' + item.flagb + '.png">');
+		} else {
+			$('.flagb').html('');
+		}
+		if ( item.flagfeed ) {
+			let elem = null;
+			elem = $('<div class="kill"><div id="kill1" align="center">&nbsp;<span style="text-align: left;">' + item.flagfeed + '</span> &nbsp;</div> </div>')
+			$('#killfeed').append(elem);
+			$(elem).delay(3000).fadeOut(1000, function() {
+				elem.remove();
+			});
+		}
+	}
+	
+	if ( item.upcrate ) {
+		if ( item.cratefeed ) {
+			let elem = null;
+			elem = $('<div class="kill"><div id="kill1" align="center">&nbsp;<span style="text-align: left;">' + item.cratefeed + '</span> &nbsp;</div> </div>')
+			$('#killfeed').append(elem);
+			$(elem).delay(3000).fadeOut(1000, function() {
+				elem.remove();
+			});
+		}
+	}
+	
+	if (item.show) {
+		if (item.killer1 != "none") {
+			let elem = null;
+			if (item.weapon != "point") {
+				elem = $('<div class="kill"><div id="kill1" align="center"><img src="img/team/' + item.kteam1 + '.png" height="15" style="margin-top:-5px;">&nbsp;<span style="text-align: left;">' + item.killer1 + ' </span><img src="img/weapon/' + item.weapon + '.png" style="margin-bottom: 4px;margin-left: 5px;margin-right: 5px;" width="70"><span> ' + item.killer2 + '</span> &nbsp;<img src="img/team/' + item.kteam2 + '.png" height="15" style="margin-top:-5px;"></div> </div>')
+			} else {
+				elem = $('<div class="kill"><div id="kill1" align="center">&nbsp;<span style="text-align: left;">' + item.killer1 + ' </span> Point <span> ' + item.killer2 + '</span> &nbsp;</div> </div>')
+			}
+			$('#killfeed').append(elem);
+			$(elem).delay(3000).fadeOut(1000, function() {
+				elem.remove();
+			});
+		}
+	}
+	
+	if ( item.uppoint ) {
+		$('.pointblock').html('<div id="wteam">'+ item.wpoint +'</div>:<div id="bteam">'+ item.bpoint +'</div>');
+	}
+	if (item.mvp) {
+		$('.mvpblock').html('<div><img src="img/team/' + item.t1 + '.png" height="18" style="margin-top:-8px;">&nbsp;'+ item.m1 +'&nbsp;&nbsp;K&nbsp;'+ item.pk1 +'&nbsp;D&nbsp;'+ item.pd1 +'&nbsp;</div><div><img src="img/team/' + item.t2 + '.png" height="18" style="margin-top:-8px;">&nbsp;'+ item.m2 +'&nbsp;&nbsp;K&nbsp;'+ item.pk2 +'&nbsp;D&nbsp;'+ item.pd2 +'&nbsp;</div><div><img src="img/team/' + item.t3 + '.png" height="18" style="margin-top:-8px;">&nbsp;'+ item.m3 +'&nbsp;&nbsp;K&nbsp;'+ item.pk3 +'&nbsp;D&nbsp;'+ item.pd3 +'&nbsp;</div>');
+	}
+
+ }, false);
+ });
+</script>
+</body>
+</html>
